@@ -1,4 +1,4 @@
 /**
- * Client code for the LLM (ingredient recognition and recipe generation) and the external recipe API.
+ * Code that calls the AI model (ingredients from photos, making recipes) and the recipe API.
  */
 package com.pantryvision.ai;

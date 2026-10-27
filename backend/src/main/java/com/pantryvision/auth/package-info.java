@@ -1,4 +1,4 @@
 /**
- * Registration, login, logout, and account management (FR-2).
+ * Sign up, log in, log out, and account stuff (FR-2).
  */
 package com.pantryvision.auth;

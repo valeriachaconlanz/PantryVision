@@ -1,4 +1,4 @@
 /**
- * Shared helpers: error handling, DTO base types, and utilities.
+ * Shared code like error handling and helper classes.
  */
 package com.pantryvision.common;

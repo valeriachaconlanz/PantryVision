@@ -1,62 +1,56 @@
 # PantryVision
 
-Snap a photo of your fridge or pantry and get recipes made from what you already have.
+PantryVision is our group project for class. The idea is you take a picture of your fridge or pantry and the app gives you recipes using the stuff you already have.
 
-PantryVision identifies ingredients from photos, text, or voice, then suggests three recipes at a time that fit your diet (low carb, keto, paleo, vegan, vegetarian, high macro, no seed oils), allergies, meal type, cooking equipment, and available time.
+You can also type or say your ingredients instead of taking a picture. The recipes take into account your diet (low carb, keto, paleo, vegan, vegetarian, high macro, no seed oils), your allergies, the meal type, what cooking tools you have, and how much time you have. It shows 3 recipes at a time.
 
-> **Status:** project setup. The folders and pages below are placeholders; no features are built yet.
+Right now this is just the starter code. The pages and folders are empty placeholders so we can all start working on our parts.
 
 ## Tech stack
 
-| Layer | Technology | Why |
-| --- | --- | --- |
-| Backend language | **Java 21** | Team's main language, current LTS |
-| Backend framework | **Spring Boot 4** (Spring Web MVC, Spring Data JPA, Validation, Actuator) | REST API, database access, request validation, health checks |
-| Build tool | **Maven** (wrapper included, `./mvnw`) | No local Maven install needed |
-| Database | **PostgreSQL** (production), **H2** in-memory (local default) | H2 lets anyone run the app with zero setup |
-| Frontend | **React 19 + Vite**, React Router | Runs in the browser, which is needed for photo compression, local photo history, and speech-to-text |
-| AI | Vision-capable LLM API (provider to be decided) | Ingredient recognition and recipe generation |
-| Recipe data | External recipe API (e.g. Spoonacular, to be decided) | Recipes from a second source besides the LLM |
-| Planned | Spring Security (auth), browser Web Speech API (voice input) | Added when those features are built |
+- **Backend:** Java 21 + Spring Boot 4
+- **Build tool:** Maven (the `mvnw` wrapper is included so you don't have to install Maven)
+- **Database:** PostgreSQL. For local testing it uses H2, which runs in memory so you don't have to set up a database to run the app.
+- **Frontend:** React + Vite. We need some JavaScript for the browser stuff like compressing photos, saving photo history on the user's device, and speech to text.
+- **AI model:** still deciding which one to use
+- **Recipe API:** still deciding (Spoonacular is one option)
+- **Later on:** Spring Security for login, Web Speech API for voice input
 
-## Project structure
+## Folder structure
 
 ```
 PantryVision/
-├── backend/                         Spring Boot REST API (Java)
-│   ├── pom.xml
+├── backend/                  Java / Spring Boot code
 │   └── src/main/java/com/pantryvision/
-│       ├── PantryVisionApplication.java
-│       ├── auth/         Registration, login, accounts (FR-2)
-│       ├── user/         Diet preferences and allergies (FR-1, FR-3)
-│       ├── ingredient/   Photo / text / voice ingredient input (FR-3 to FR-9)
-│       ├── recipe/       Suggestions, filters, details (FR-10 to FR-18)
-│       ├── rating/       Ratings and feedback (FR-15)
-│       ├── library/      Saved recipes by type (FR-19, FR-20)
-│       ├── ai/           LLM and recipe API clients
-│       ├── config/       Security, CORS, API settings
-│       └── common/       Shared helpers and error handling
-├── frontend/                        React + Vite web app
+│       ├── auth/             sign up, log in, log out
+│       ├── user/             diet preferences and allergies
+│       ├── ingredient/       photo, text, and voice input
+│       ├── recipe/           recipe suggestions and filters
+│       ├── rating/           recipe ratings
+│       ├── library/          saved recipes
+│       ├── ai/               code that talks to the AI model and recipe API
+│       ├── config/           app settings
+│       └── common/           shared stuff
+├── frontend/                 React code
 │   └── src/
-│       ├── pages/        One file per screen (Home, Login, Onboarding, Search, Recipes, ...)
-│       ├── components/   Reusable UI pieces
-│       ├── hooks/        Custom React hooks
-│       ├── utils/        Helpers (e.g. image compression)
-│       └── api/          Calls to the backend
-└── .env.example                     Environment variables to copy into .env
+│       ├── pages/            one file per page
+│       ├── components/       reusable pieces like buttons and cards
+│       ├── hooks/            custom React hooks
+│       ├── utils/            helper functions
+│       └── api/              calls to the backend
+└── .env.example              list of the keys/settings you need
 ```
 
-Each backend package has a `package-info.java` describing what goes in it. Inside a package, use the usual Spring layers: `XController`, `XService`, `XRepository`, and entity/DTO classes.
+Every backend folder has a `package-info.java` file that says what goes in it and which requirements (FR numbers from our doc) it covers.
 
-## Getting started
+## How to run it
 
-### Prerequisites
-
-- **JDK 21 or newer** (`java -version`)
-- **Node.js 20.19+ or 22+** (`node -v`)
+You need:
+- Java 21 or newer (check with `java -version`)
+- Node.js 20.19 or newer (check with `node -v`)
 - Git
 
-### 1. Clone
+### 1. Clone the repo
 
 ```bash
 git clone https://github.com/valeriachaconlanz/PantryVision.git
@@ -64,25 +58,31 @@ cd PantryVision
 cp .env.example .env
 ```
 
-### 2. Run the backend (port 8080)
+### 2. Start the backend
 
 ```bash
 cd backend
-./mvnw spring-boot:run        # Windows: mvnw.cmd spring-boot:run
+./mvnw spring-boot:run
 ```
 
-Check it at http://localhost:8080/actuator/health. It should return `{"status":"UP"}`.
-The H2 database console is at http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:pantryvision`, user `sa`, no password).
+On Windows use `mvnw.cmd spring-boot:run` instead.
 
-To use PostgreSQL instead, set the `DB_*` variables and run:
+To check if it's working go to http://localhost:8080/actuator/health. You should see `{"status":"UP"}`.
+
+If you want to look at the database go to http://localhost:8080/h2-console and use:
+- JDBC URL: `jdbc:h2:mem:pantryvision`
+- User: `sa`
+- Password: leave it blank
+
+If you want to use PostgreSQL instead, fill in the `DB_` values in `.env` and run:
 
 ```bash
 SPRING_PROFILES_ACTIVE=postgres ./mvnw spring-boot:run
 ```
 
-### 3. Run the frontend (port 5173)
+### 3. Start the frontend
 
-In a second terminal:
+Open a second terminal:
 
 ```bash
 cd frontend
@@ -90,38 +90,34 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173. Requests to `/api/...` are forwarded to the backend automatically.
+Then go to http://localhost:5173. Anything that calls `/api/...` gets sent to the backend automatically.
 
-### Useful commands
+### Other commands
 
-| Where | Command | What it does |
-| --- | --- | --- |
-| `backend/` | `./mvnw test` | Run backend tests |
-| `backend/` | `./mvnw package` | Build a runnable JAR into `target/` |
-| `frontend/` | `npm run build` | Production build into `dist/` |
-| `frontend/` | `npm run lint` | Lint the frontend |
+- `./mvnw test` (in backend) runs the backend tests
+- `./mvnw package` (in backend) builds the backend into a .jar file
+- `npm run build` (in frontend) builds the frontend
+- `npm run lint` (in frontend) checks the frontend code for mistakes
 
-## Team workflow
+## How we work on it
 
-1. Pull the latest `main`: `git checkout main && git pull`
-2. Create a branch for your task: `git checkout -b feature/short-description` (or `fix/...`)
-3. Commit small, clear changes: `git commit -m "Add diet preference survey form"`
-4. Push and open a pull request into `main`: `git push -u origin feature/short-description`
-5. Get at least one teammate's review before merging.
+1. Get the latest code: `git checkout main` then `git pull`
+2. Make your own branch: `git checkout -b feature/what-youre-doing`
+3. Commit your changes: `git commit -m "Add diet survey page"`
+4. Push your branch: `git push -u origin feature/what-youre-doing`
+5. Open a pull request on GitHub and have at least one person look at it before merging
 
-Never commit `.env` or API keys.
+Please don't push straight to `main`, and don't commit your `.env` file or any API keys.
 
 ## Team
 
-Roles rotate each sprint.
+Our roles rotate every sprint.
 
-| Member | Current role |
-| --- | --- |
-| Valeria Chacon | Scrum Master / Developer |
-| Karina Villalobos Hernandez | Developer / Graphic Designer |
-| Marlon Castillo | Product Owner / Developer |
-| Perla Caceres-Calixto | Tester / Developer |
-| Mizell Jackson | Tester / Developer |
-| Owen Martinez | Tester / Developer |
+- Valeria Chacon: Scrum Master / Developer
+- Karina Villalobos Hernandez: Developer / Graphic Designer
+- Marlon Castillo: Product Owner / Developer
+- Perla Caceres-Calixto: Tester / Developer
+- Mizell Jackson: Tester / Developer
+- Owen Martinez: Tester / Developer
 
-We meet Tuesdays at 4 p.m. (main meeting) and Fridays as needed.
+We meet Tuesdays at 4 pm and Fridays if we need to.

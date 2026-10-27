@@ -2,7 +2,7 @@ export default function Login() {
   return (
     <section>
       <h1>Log in</h1>
-      <p className="todo">TODO: Registration, login, and logout (FR-2).</p>
+      <p className="todo">TODO: sign up, log in, log out (FR-2)</p>
     </section>
   )
 }

@@ -1,5 +1,5 @@
-// Small wrapper around fetch for calling the Spring Boot API.
-// In development, Vite proxies /api to http://localhost:8080 (see vite.config.js).
+// Helper for calling our Spring Boot backend.
+// When running locally, /api gets sent to localhost:8080 (see vite.config.js).
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
 

@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    // Forward /api calls to the Spring Boot backend during development
+    // sends /api requests to the backend when running locally
     proxy: {
       '/api': 'http://localhost:8080',
     },
