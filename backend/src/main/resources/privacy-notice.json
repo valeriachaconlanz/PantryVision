@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-11-03",
+  "title": "Your privacy",
+  "sections": [
+    {
+      "heading": "What we use",
+      "body": "To suggest recipes we use the ingredients you give us (from a photo, typing, or your voice), plus the diet, allergies, meal type, cooking tools, and time limit you choose. If you make an account we also keep your saved recipes and ratings."
+    },
+    {
+      "heading": "Photos",
+      "body": "Photos are made smaller on your device before they are uploaded. We only use them to find the ingredients in them. Your photo history is saved on your device, not on our servers."
+    },
+    {
+      "heading": "Voice input",
+      "body": "Voice input uses your browser's built-in speech recognition. Depending on your browser, the audio may be processed by the browser's company (for example Google for Chrome)."
+    },
+    {
+      "heading": "Other services we use",
+      "body": "We send your photo or ingredient list to an AI service to find ingredients and make recipes, and we may use an outside recipe service. They only get what they need to do that."
+    },
+    {
+      "heading": "Your choices",
+      "body": "You can always type your ingredients instead of using a photo or your voice. You can delete your photo history by clearing this site's data in your browser. To remember that you accepted this note, we save a random id in your browser."
+    }
+  ]
+}
