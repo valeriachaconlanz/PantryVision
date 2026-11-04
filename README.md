@@ -10,7 +10,7 @@ Right now this is just the starter code. The pages and folders are empty placeho
 
 - **Backend:** Java 21 + Spring Boot 4
 - **Build tool:** Maven (the `mvnw` wrapper is included so you don't have to install Maven)
-- **Database:** PostgreSQL. For local testing it uses H2, which runs in memory so you don't have to set up a database to run the app.
+- **Database:** Supabase (PostgreSQL). For quick local testing it uses H2, which runs in memory so you don't have to set up a database to run the app.
 - **Frontend:** React + Vite. We need some JavaScript for the browser stuff like compressing photos, saving photo history on the user's device, and speech to text.
 - **AI model:** still deciding which one to use
 - **Recipe API:** still deciding (Spoonacular is one option)
@@ -74,11 +74,20 @@ If you want to look at the database go to http://localhost:8080/h2-console and u
 - User: `sa`
 - Password: leave it blank
 
-If you want to use PostgreSQL instead, fill in the `DB_` values in `.env` and run:
+### Using the Supabase database
+
+By default the backend uses H2, so your test data goes away when you stop it. To use our shared Supabase database instead:
+
+1. Fill in the `SUPABASE_DB_` values in your `.env`. Ask Valeria for the password (don't post it in the group chat or on GitHub).
+2. Start the backend with the supabase profile:
 
 ```bash
-SPRING_PROFILES_ACTIVE=postgres ./mvnw spring-boot:run
+SPRING_PROFILES_ACTIVE=supabase ./mvnw spring-boot:run
 ```
+
+On Windows (PowerShell): `$env:SPRING_PROFILES_ACTIVE="supabase"; .\mvnw.cmd spring-boot:run`
+
+Heads up: we all share the same database, so be careful deleting stuff.
 
 ### 3. Start the frontend
 
