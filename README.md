@@ -78,7 +78,7 @@ If you want to look at the database go to http://localhost:8080/h2-console and u
 
 By default the backend uses H2, so your test data goes away when you stop it. To use our shared Supabase database instead:
 
-1. Fill in the `SUPABASE_DB_` values in your `.env`. Ask Valeria for the password (don't post it in the group chat or on GitHub).
+1. The Supabase URL and user are already in `.env.example`, so you just need to add the password to your `.env`. Ask Valeria for it (don't post it in the group chat or on GitHub).
 2. Start the backend with the supabase profile:
 
 ```bash
