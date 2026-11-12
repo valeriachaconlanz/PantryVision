@@ -1,0 +1,80 @@
+.auth {
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 56px;
+  align-items: center;
+  padding-top: 32px;
+  padding-bottom: 40px;
+}
+
+.auth h1 {
+  font-size: clamp(44px, 6vw, 76px);
+  margin: 0 0 16px;
+}
+
+.perks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.perks li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.perks b {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: var(--line);
+  border-radius: 50%;
+  background: var(--yolk);
+  font-family: 'Luckiest Guy', sans-serif;
+  font-weight: 400;
+  flex: none;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.tabs a {
+  text-align: center;
+  padding: 9px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.tabs a.on {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.fine {
+  font-size: 14px;
+  margin: 14px 0 0;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .auth {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 8px;
+  }
+
+  .perks {
+    display: none;
+  }
+}

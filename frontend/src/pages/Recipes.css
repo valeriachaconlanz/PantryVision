@@ -1,0 +1,53 @@
+.have {
+  margin: 0 0 22px;
+}
+
+.have .chip {
+  font-size: 15px;
+  padding: 5px 12px;
+}
+
+.add-ingredient input {
+  width: 110px;
+  font: 700 15px 'Bricolage Grotesque', sans-serif;
+  color: var(--ink);
+  cursor: text;
+}
+
+.add-ingredient input::placeholder {
+  color: var(--ink);
+}
+
+.add-ingredient input:focus {
+  outline: none;
+  background: #fff;
+  border-style: solid;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 26px;
+  font-size: 15px;
+}
+
+.more {
+  text-align: center;
+  margin: 36px 0 0;
+}
+
+.more p {
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.empty .lede {
+  margin: 0 auto 24px;
+}

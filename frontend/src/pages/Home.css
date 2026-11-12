@@ -1,0 +1,268 @@
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 48px;
+  align-items: center;
+  padding: 40px 0 72px;
+}
+
+.hero h1 {
+  font-size: clamp(44px, 6.4vw, 82px);
+  line-height: 0.98;
+  margin: 0 0 18px;
+}
+
+.hero p {
+  font-size: 20px;
+  max-width: 30ch;
+  margin: 0 0 28px;
+}
+
+.hero .ctas {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero small {
+  display: block;
+  margin-top: 16px;
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+/* fake fridge photo with ingredient stickers */
+.demo {
+  position: relative;
+  min-height: 430px;
+}
+
+.demo .photo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 66%;
+  aspect-ratio: 4 / 5;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 86px, rgba(0, 0, 0, 0.14) 86px 89px),
+    linear-gradient(#eef3f2, #dfe8e6);
+  border: var(--line);
+  border-radius: 18px;
+  box-shadow: var(--pop);
+  transform: rotate(-3deg);
+  overflow: hidden;
+}
+
+.demo .photo::before {
+  content: 'your fridge pic';
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 1px 8px;
+}
+
+.shelf-item {
+  position: absolute;
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+}
+
+.fridge-tag {
+  position: absolute;
+  font-weight: 800;
+  font-size: 15px;
+  background: var(--paper);
+  border: var(--line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  box-shadow: var(--pop-sm);
+  white-space: nowrap;
+}
+
+.fridge-tag i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  margin-right: 6px;
+}
+
+.demo-card {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  background: var(--paper);
+  border: var(--line);
+  border-radius: 18px;
+  box-shadow: var(--pop);
+  padding: 16px 18px;
+  transform: rotate(2deg);
+}
+
+.demo-card h3 {
+  margin: 2px 0 10px;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+/* how it works, laid out like a recipe */
+.how {
+  padding: 24px 0 72px;
+}
+
+.how-card {
+  background: var(--paper);
+  border: var(--line);
+  border-radius: 22px;
+  box-shadow: 8px 8px 0 var(--ink);
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  overflow: hidden;
+}
+
+.how-card aside {
+  background: var(--yolk);
+  border-right: var(--line);
+  padding: 28px;
+}
+
+.how-card aside h2 {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 40px;
+  line-height: 1;
+  margin: 0 0 14px;
+}
+
+.how-card aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-weight: 600;
+}
+
+.how-card aside li {
+  padding: 6px 0;
+  border-bottom: 2px dashed rgba(27, 23, 18, 0.35);
+}
+
+.how-card ol {
+  margin: 0;
+  padding: 28px 32px;
+  list-style: none;
+  counter-reset: s;
+}
+
+.how-card ol li {
+  counter-increment: s;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 2px solid var(--fog);
+}
+
+.how-card ol li:last-child {
+  border-bottom: 0;
+}
+
+.how-card ol li::before {
+  content: counter(s);
+  font-family: 'Luckiest Guy', sans-serif;
+  font-size: 26px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: var(--line);
+  border-radius: 50%;
+  background: var(--cream);
+}
+
+.how-card ol b {
+  display: block;
+  font-size: 19px;
+}
+
+.privacy-band {
+  background: var(--leaf);
+  color: #fff;
+  border-top: var(--line);
+  border-bottom: var(--line);
+}
+
+.privacy-band .wrap {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.privacy-band h2 {
+  margin: 0 0 4px;
+  font-size: 26px;
+}
+
+.privacy-band p {
+  margin: 0;
+  max-width: 60ch;
+}
+
+.privacy-band .btn {
+  white-space: nowrap;
+}
+
+.privacy-note h3 {
+  margin: 16px 0 2px;
+  font-size: 18px;
+}
+
+.privacy-note p {
+  margin: 0 0 8px;
+  max-width: 70ch;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 16px 0 48px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .demo {
+    min-height: 380px;
+  }
+
+  .how-card {
+    grid-template-columns: 1fr;
+  }
+
+  .how-card aside {
+    border-right: 0;
+    border-bottom: var(--line);
+  }
+
+  .how-card ol {
+    padding: 16px 20px;
+  }
+
+  .privacy-band .wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
