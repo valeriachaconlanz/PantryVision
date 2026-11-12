@@ -6,7 +6,8 @@ import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.pantryvision.common.UserFacingException;
 
 @Service
 public class PrivacyAcceptanceService {
@@ -35,7 +36,7 @@ public class PrivacyAcceptanceService {
 	public AcceptanceStatus accept(AcceptPrivacyRequest request) {
 		String current = noticeService.currentVersion();
 		if (!current.equals(request.version())) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT,
+			throw new UserFacingException(HttpStatus.CONFLICT,
 					"Privacy note version " + request.version() + " is out of date. Current version is " + current + ".");
 		}
 		PrivacyAcceptance saved = repository.save(new PrivacyAcceptance(request.clientId(), current, Instant.now(clock)));

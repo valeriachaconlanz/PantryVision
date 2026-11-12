@@ -1,6 +1,8 @@
 package com.pantryvision.recipe;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -20,12 +22,21 @@ class RecipeControllerTests {
 	@Test
 	void searchWithoutAKeySays503() throws Exception {
 		mockMvc.perform(get("/api/recipes/search").param("ingredients", "eggs", "spinach"))
-				.andExpect(status().isServiceUnavailable());
+				.andExpect(status().isServiceUnavailable())
+				.andExpect(jsonPath("$.message", containsString("RECIPE_API_KEY")));
 	}
 
 	@Test
 	void searchNeedsIngredients() throws Exception {
 		mockMvc.perform(get("/api/recipes/search")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void otherErrorsDontShowTheirDetails() throws Exception {
+		mockMvc.perform(get("/api/recipes/not-a-number"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").doesNotExist())
+				.andExpect(jsonPath("$.trace").doesNotExist());
 	}
 
 	@Test
