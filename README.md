@@ -13,7 +13,7 @@ Right now this is just the starter code. The pages and folders are empty placeho
 - **Database:** Supabase (PostgreSQL). For quick local testing it uses H2, which runs in memory so you don't have to set up a database to run the app.
 - **Frontend:** React + Vite. We need some JavaScript for the browser stuff like compressing photos, saving photo history on the user's device, and speech to text.
 - **AI model:** still deciding which one to use
-- **Recipe API:** still deciding (Spoonacular is one option)
+- **Recipe API:** [Spoonacular](https://spoonacular.com/food-api). The backend calls it so our key never ends up in the browser.
 - **Later on:** Spring Security for login, Web Speech API for voice input
 
 ## Folder structure
@@ -89,6 +89,23 @@ SPRING_PROFILES_ACTIVE=supabase ./mvnw spring-boot:run
 On Windows (PowerShell): `$env:SPRING_PROFILES_ACTIVE="supabase"; .\mvnw.cmd spring-boot:run`
 
 Heads up: we all share the same database, so be careful deleting stuff.
+
+### Turning on recipe search (Spoonacular)
+
+Recipe search needs a Spoonacular API key. Without one, `/api/recipes/...` just says the key isn't set.
+
+1. Make a free account at https://spoonacular.com/food-api/console and copy your API key.
+2. Put it in your `.env` as `RECIPE_API_KEY=your-key`.
+3. Restart the backend and try it: http://localhost:8080/api/recipes/search?ingredients=eggs,spinach,feta&meal=Dinner
+
+The free plan only gives us around 150 points a day (one search is about 1 to 2 points), so don't spam refresh. The tests use a fake Spoonacular server so they don't use any.
+
+What the endpoints take:
+
+- `GET /api/recipes/search` with `ingredients` (required, comma separated), `meal` (Breakfast, Lunch, Dinner, Dessert), `diets`, `allergies`, `maxMinutes`, and `offset`. You get 3 recipes back plus a `nextOffset` for "show 3 more".
+- `GET /api/recipes/{id}` with an optional `have` list, so it can mark which ingredients you already have.
+
+Diets like keto, paleo, vegan and vegetarian map straight to Spoonacular. "Low carb" means 30g carbs or less per serving, "high macro" means 25g protein or more, and "no seed oils" excludes canola, vegetable, soybean and other seed oils. Allergies Spoonacular doesn't know about (like kiwi) get excluded as ingredients.
 
 ### 3. Start the frontend
 
