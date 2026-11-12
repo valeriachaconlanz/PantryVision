@@ -1,0 +1,70 @@
+.types {
+  margin-bottom: 8px;
+}
+
+.types .chip b {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 13px;
+  padding: 0 6px;
+}
+
+.types .chip[aria-pressed='true'] b {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.section-title {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 30px;
+  margin: 34px 0 14px;
+}
+
+.cards.four {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.saved-on {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.empty-library {
+  max-width: 520px;
+}
+
+.empty-library p {
+  margin: 0 0 18px;
+}
+
+@media (max-width: 960px) {
+  .cards.four {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .cards.four {
+    gap: 14px;
+  }
+
+  .cards.four .rcard h3 {
+    font-size: 16px;
+  }
+
+  .cards.four .rcard .body {
+    padding: 10px 12px 12px;
+  }
+
+  .cards.four .rcard .meta {
+    display: none;
+  }
+}
