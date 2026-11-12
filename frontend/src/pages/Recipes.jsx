@@ -1,18 +1,63 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { searchRecipes } from '../api/recipes.js'
 import RecipeCard from '../components/RecipeCard.jsx'
 import useAppState from '../hooks/useAppState.js'
 import { NO_DIET } from '../data/options.js'
-import { SAMPLE_RECIPES } from '../data/sampleRecipes.js'
 import './Recipes.css'
 
 const PLURAL = { Breakfast: 'breakfasts', Lunch: 'lunches', Dinner: 'dinners', Dessert: 'desserts' }
 
-// FR-11 to FR-13, FR-18: 3 recipes at a time, with the filters you picked.
+// FR-11 to FR-13, FR-18: 3 real recipes at a time, with the filters you picked.
 export default function Recipes() {
   const { search, setSearch, prefs } = useAppState()
   const [adding, setAdding] = useState('')
-  const [askedForMore, setAskedForMore] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const alive = useRef(true)
+
+  useEffect(() => {
+    alive.current = true
+    return () => {
+      alive.current = false
+    }
+  }, [])
+
+  async function load(next, offset) {
+    setLoading(true)
+    setError(null)
+    try {
+      const page = await searchRecipes(next, prefs, offset)
+      if (!alive.current) return
+      setSearch({ ...next, results: page.results, offset: page.offset, nextOffset: page.nextOffset, total: page.totalResults })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (err) {
+      if (alive.current) setError(err.message)
+    } finally {
+      if (alive.current) setLoading(false)
+    }
+  }
+
+  // if we have ingredients but never got results (like an old saved search), ask once
+  const needsFirstLoad = search.ingredients.length > 0 && search.results == null
+  useEffect(() => {
+    if (needsFirstLoad) load(search, 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsFirstLoad])
+
+  // changing your ingredients starts the search over from the first 3
+  function changeIngredients(ingredients) {
+    if (!ingredients.length) return
+    load({ ...search, ingredients }, 0)
+  }
+
+  function addIngredient(e) {
+    e.preventDefault()
+    const name = adding.trim()
+    setAdding('')
+    if (!name || search.ingredients.some((i) => i.toLowerCase() === name.toLowerCase())) return
+    changeIngredients([...search.ingredients, name[0].toUpperCase() + name.slice(1)])
+  }
 
   if (!search.ingredients.length) {
     return (
@@ -26,38 +71,30 @@ export default function Recipes() {
     )
   }
 
-  // TODO: get these from the backend (Spoonacular + AI) using search + prefs
-  const recipes = SAMPLE_RECIPES
-
-  function removeIngredient(name) {
-    setSearch({ ...search, ingredients: search.ingredients.filter((i) => i !== name) })
-  }
-
-  function addIngredient(e) {
-    e.preventDefault()
-    const name = adding.trim()
-    if (name && !search.ingredients.some((i) => i.toLowerCase() === name.toLowerCase())) {
-      setSearch({ ...search, ingredients: [...search.ingredients, name[0].toUpperCase() + name.slice(1)] })
-    }
-    setAdding('')
-  }
-
-  const filters = [
-    search.maxMinutes && `Under ${search.maxMinutes} min`,
-    search.tools.length && search.tools.join(', '),
-  ].filter(Boolean)
+  const recipes = search.results ?? []
+  const filters = [search.maxMinutes && `Under ${search.maxMinutes} min`].filter(Boolean)
   const dietTags = [...prefs.diets.filter((d) => d !== NO_DIET), ...prefs.allergies.map((a) => `No ${a.toLowerCase()}`)]
+  const hasMore = search.nextOffset < search.total
 
   return (
     <div className="recipes">
-      <h1>3 {PLURAL[search.meal] ?? 'recipes'} for you</h1>
+      <h1>
+        {recipes.length || 'No'} {PLURAL[search.meal] ?? 'recipes'} for you
+      </h1>
       <p className="lede" style={{ marginBottom: 14 }}>
-        Based on what we found. Missed something? Add it and we'll redo it.
+        Based on what you have. Missed something? Add it and we'll look again.
       </p>
 
       <div className="chips have">
         {search.ingredients.map((name) => (
-          <button key={name} type="button" className="chip on" onClick={() => removeIngredient(name)} aria-label={`Remove ${name}`}>
+          <button
+            key={name}
+            type="button"
+            className="chip on"
+            disabled={loading || search.ingredients.length === 1}
+            onClick={() => changeIngredients(search.ingredients.filter((i) => i !== name))}
+            aria-label={`Remove ${name}`}
+          >
             {name} <span className="x">✕</span>
           </button>
         ))}
@@ -70,6 +107,7 @@ export default function Recipes() {
             className="chip dashed"
             placeholder="+ Add"
             value={adding}
+            disabled={loading}
             onChange={(e) => setAdding(e.target.value)}
           />
         </form>
@@ -94,22 +132,49 @@ export default function Recipes() {
         </div>
       )}
 
-      <div className="cards">
-        {recipes.map((r, i) => (
-          <RecipeCard key={r.id} recipe={r} kicker={`Recipe ${i + 1} of 3`} />
-        ))}
-      </div>
-
-      <div className="more">
-        <button type="button" className="btn big" onClick={() => setAskedForMore(true)}>
-          Nah, show me 3 more
-        </button>
-        <p className="muted">
-          {askedForMore
-            ? "This'll work once the recipe search is hooked up to the backend."
-            : "You won't see these 3 again in this search."}
+      {error && (
+        <p className="note error-box" role="alert">
+          {error}
         </p>
-      </div>
+      )}
+
+      {loading ? (
+        <p className="loading-line">Finding recipes...</p>
+      ) : recipes.length === 0 ? (
+        <div className="panel no-results">
+          <h2>Couldn't find anything</h2>
+          <p>Try taking out an ingredient, giving yourself more time, or loosening your diet filters.</p>
+          <Link className="btn red" to="/search">
+            Change my search
+          </Link>
+        </div>
+      ) : (
+        <div className="cards">
+          {recipes.map((r, i) => (
+            <RecipeCard key={r.id} recipe={r} kicker={`Recipe ${search.offset + i + 1} of ${search.total}`} />
+          ))}
+        </div>
+      )}
+
+      {recipes.length > 0 && (
+        <div className="more">
+          <div className="row" style={{ justifyContent: 'center' }}>
+            {search.offset > 0 && (
+              <button type="button" className="btn" disabled={loading} onClick={() => load(search, Math.max(0, search.offset - 3))}>
+                ← Last 3
+              </button>
+            )}
+            {hasMore && (
+              <button type="button" className="btn big" disabled={loading} onClick={() => load(search, search.nextOffset)}>
+                Nah, show me 3 more
+              </button>
+            )}
+          </div>
+          <p className="muted">
+            {hasMore ? `${search.total} recipes matched, you're seeing ${search.offset + 1} to ${search.nextOffset}.` : "That's all of them."}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

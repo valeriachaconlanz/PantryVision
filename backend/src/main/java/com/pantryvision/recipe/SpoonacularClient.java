@@ -15,10 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import com.pantryvision.common.UserFacingException;
 
 /**
  * Talks to the Spoonacular API (FR-10). The key only lives here on the backend,
@@ -71,7 +72,7 @@ public class SpoonacularClient {
 				.retrieve()
 				.body(RecipeInfo.class));
 		if (info == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+			throw new UserFacingException(HttpStatus.NOT_FOUND, "Recipe not found");
 		}
 		List<Recipe.Ingredient> ingredients = info.extendedIngredients() == null ? List.of()
 				: info.extendedIngredients().stream()
@@ -146,7 +147,7 @@ public class SpoonacularClient {
 
 	private void requireKey() {
 		if (!properties.hasKey()) {
-			throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+			throw new UserFacingException(HttpStatus.SERVICE_UNAVAILABLE,
 					"Recipe search is off because RECIPE_API_KEY isn't set in .env");
 		}
 	}
@@ -157,18 +158,18 @@ public class SpoonacularClient {
 		} catch (HttpClientErrorException e) {
 			HttpStatus status = HttpStatus.resolve(e.getStatusCode().value());
 			if (status == HttpStatus.UNAUTHORIZED || status == HttpStatus.FORBIDDEN) {
-				throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Spoonacular rejected our API key");
+				throw new UserFacingException(HttpStatus.SERVICE_UNAVAILABLE, "Spoonacular rejected our API key");
 			}
 			if (status == HttpStatus.PAYMENT_REQUIRED || status == HttpStatus.TOO_MANY_REQUESTS) {
-				throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+				throw new UserFacingException(HttpStatus.SERVICE_UNAVAILABLE,
 						"We hit Spoonacular's daily limit, try again tomorrow");
 			}
 			if (status == HttpStatus.NOT_FOUND) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recipe not found");
+				throw new UserFacingException(HttpStatus.NOT_FOUND, "Recipe not found");
 			}
-			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Spoonacular didn't like that request");
+			throw new UserFacingException(HttpStatus.BAD_GATEWAY, "Spoonacular didn't like that request");
 		} catch (RestClientException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Couldn't reach Spoonacular", e);
+			throw new UserFacingException(HttpStatus.BAD_GATEWAY, "Couldn't reach Spoonacular", e);
 		}
 	}
 

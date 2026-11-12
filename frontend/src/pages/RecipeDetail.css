@@ -177,3 +177,22 @@
     grid-template-columns: 1fr;
   }
 }
+
+.hero-photo {
+  border: var(--line);
+  border-radius: 22px;
+  box-shadow: 8px 8px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.hero-photo .plate {
+  height: 320px;
+  border-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .hero-photo .plate {
+    height: 200px;
+  }
+}

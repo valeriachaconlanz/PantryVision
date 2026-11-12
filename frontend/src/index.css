@@ -602,3 +602,18 @@ textarea.input {
   margin-top: 28px;
   gap: 16px;
 }
+
+.loading-line {
+  font-family: 'Luckiest Guy', sans-serif;
+  font-size: 28px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 40px 0;
+  animation: pulse-text 1s infinite alternate;
+}
+
+@keyframes pulse-text {
+  to {
+    opacity: 0.4;
+  }
+}
