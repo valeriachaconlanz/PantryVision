@@ -28,6 +28,7 @@ PantryVision/
 │       ├── recipe/           recipe suggestions and filters
 │       ├── rating/           recipe ratings
 │       ├── library/          saved recipes
+│       ├── privacy/          privacy note on the home page (FR-21)
 │       ├── ai/               code that talks to the AI model and recipe API
 │       ├── config/           app settings
 │       └── common/           shared stuff
