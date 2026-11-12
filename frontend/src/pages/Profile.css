@@ -1,0 +1,84 @@
+.me {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 24px 0 28px;
+}
+
+.big-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: var(--line);
+  background: var(--yolk);
+  box-shadow: var(--pop);
+  display: grid;
+  place-items: center;
+  font-family: 'Luckiest Guy', sans-serif;
+  font-size: 44px;
+  flex: none;
+}
+
+.me h1 {
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+
+.saved-note {
+  margin: -12px 0 16px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.spread {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.spread .link {
+  font-size: 15px;
+}
+
+.profile .note {
+  margin: 0 0 14px;
+}
+
+.history {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.history img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+  display: block;
+}
+
+.danger-zone {
+  margin-top: 28px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .big-avatar {
+    width: 72px;
+    height: 72px;
+    font-size: 34px;
+  }
+}
