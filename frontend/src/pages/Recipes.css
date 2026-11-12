@@ -51,3 +51,18 @@
 .empty .lede {
   margin: 0 auto 24px;
 }
+
+.error-box {
+  color: #b52a16;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 0 20px;
+}
+
+.no-results {
+  max-width: 560px;
+}
+
+.no-results p {
+  margin: 0 0 18px;
+}

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Plate } from '../components/RecipeCard.jsx'
 import useAppState from '../hooks/useAppState.js'
 import { MEALS } from '../data/options.js'
-import { findRecipe } from '../data/sampleRecipes.js'
 import './Library.css'
 
 // FR-20: saved recipes, sorted by meal type.
@@ -12,10 +11,8 @@ export default function Library() {
   const [filter, setFilter] = useState('All')
 
   // TODO: load saved recipes from the backend (library package)
-  const recipes = saved
-    .map((s) => ({ ...findRecipe(s.id), savedAt: s.savedAt }))
-    .filter((r) => r.id)
-    .sort((a, b) => b.savedAt.localeCompare(a.savedAt))
+  // old saves from the sample recipes don't have a title, so skip those
+  const recipes = saved.filter((r) => r.title).sort((a, b) => b.savedAt.localeCompare(a.savedAt))
 
   const count = (meal) => recipes.filter((r) => r.meal === meal).length
   const shown = MEALS.filter((m) => (filter === 'All' || filter === m) && count(m) > 0)
@@ -57,8 +54,8 @@ export default function Library() {
                       <div className="body">
                         <h3>{r.title}</h3>
                         <div className="meta">
-                          <span className="tag">{r.prepMinutes + r.cookMinutes} min</span>
-                          <span className="tag yolk">★ {r.rating.toFixed(1)}</span>
+                          {r.totalMinutes != null && <span className="tag">{r.totalMinutes} min</span>}
+                          {r.score != null && <span className="tag yolk">★ {r.score.toFixed(1)}</span>}
                         </div>
                         <div className="saved-on">
                           Saved {new Date(r.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}

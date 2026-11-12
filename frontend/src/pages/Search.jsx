@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ChipPicker from '../components/ChipPicker.jsx'
+import { searchRecipes } from '../api/recipes.js'
+import { EMPTY_SEARCH } from '../context/appStateContext.js'
 import useAppState from '../hooks/useAppState.js'
-import { SAMPLE_INGREDIENTS } from '../data/sampleRecipes.js'
+import { FAKE_PHOTO_INGREDIENTS } from '../data/fakePhotoIngredients.js'
 import { MEALS, NO_DIET, TIMES, TOOLS, mealForHour } from '../data/options.js'
 import useSpeech from '../hooks/useSpeech.js'
 import { parseIngredients } from '../utils/ingredients.js'
 import { ACCEPTED, MAX_PHOTOS, addToPhotoHistory, compressPhoto } from '../utils/photos.js'
 import './Search.css'
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const MODES = [
   { id: 'photo', label: 'Photo', hint: 'up to 3 pics' },
@@ -39,14 +43,14 @@ export default function Search() {
   useEffect(() => {
     photosRef.current = photos
   }, [photos])
-  const timer = useRef(null)
-  useEffect(
-    () => () => {
-      clearTimeout(timer.current)
+  const alive = useRef(true)
+  useEffect(() => {
+    alive.current = true
+    return () => {
+      alive.current = false
       photosRef.current.forEach((p) => p.previewUrl && URL.revokeObjectURL(p.previewUrl))
-    },
-    [],
-  )
+    }
+  }, [])
 
   async function addPhotos(fileList) {
     setError(null)
@@ -76,7 +80,7 @@ export default function Search() {
     })
   }
 
-  function findRecipes() {
+  async function findRecipes() {
     const typed = parseIngredients(text)
     if (mode === 'photo' && photos.length === 0) {
       setError('Add at least one photo first, or switch to typing.')
@@ -88,19 +92,30 @@ export default function Search() {
     }
     setError(null)
 
-    // TODO: send the photos or the list to the backend and use what the AI finds.
-    // For now photos just pretend to find the sample ingredients.
-    const found = mode === 'photo' ? SAMPLE_INGREDIENTS : typed
+    // TODO: send the photos to the backend and use what the AI finds.
+    // Until the AI part exists, photos pretend to find a few ingredients. Typing and voice are real.
+    const found = mode === 'photo' ? FAKE_PHOTO_INGREDIENTS : typed
     if (mode === 'photo') addToPhotoHistory(photos.map((p) => p.thumb))
 
-    setSearch({
+    const query = {
+      ...EMPTY_SEARCH,
       ingredients: found,
       meal,
       tools,
       maxMinutes: TIMES.find((t) => t.label === time)?.minutes ?? null,
-    })
+    }
     setAnalyzing(found)
-    timer.current = setTimeout(() => navigate('/recipes'), 2600)
+    try {
+      // wait at least a second and a half so the animation doesn't just flash
+      const [page] = await Promise.all([searchRecipes(query, prefs, 0), wait(1500)])
+      if (!alive.current) return
+      setSearch({ ...query, results: page.results, offset: page.offset, nextOffset: page.nextOffset, total: page.totalResults })
+      navigate('/recipes')
+    } catch (err) {
+      if (!alive.current) return
+      setAnalyzing(null)
+      setError(err.message)
+    }
   }
 
   if (analyzing) return <Analyzing found={analyzing} fromPhoto={mode === 'photo'} />
