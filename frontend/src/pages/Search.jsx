@@ -35,6 +35,9 @@ export default function Search() {
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
   const [analyzing, setAnalyzing] = useState(null) // list of ingredients being "found"
+  const [reviewIngredients, setReviewIngredients] = useState(null) // Keeps track of the ingredients while the user reviews and edits them
+  const [editingIngredient, setEditingIngredient] = useState(null)// Remembers which ingredient is currently being edited
+  const [newIngredient, setNewIngredient] = useState('')// Keeps track of the new ingredient the user wants to add
 
   const speech = useSpeech((heard) => setText((t) => (t ? `${t}, ${heard}` : heard)))
 
@@ -94,8 +97,22 @@ export default function Search() {
 
     // TODO: send the photos to the backend and use what the AI finds.
     // Until the AI part exists, photos pretend to find a few ingredients. Typing and voice are real.
-    const found = mode === 'photo' ? FAKE_PHOTO_INGREDIENTS : typed
-    if (mode === 'photo') addToPhotoHistory(photos.map((p) => p.thumb))
+    // For now, photos use a sample list until the AI model is connected.
+  if (mode === 'photo') {
+    addToPhotoHistory(photos.map((p) => p.thumb))
+    // Example groups for the review screen.
+    // These are not predictions from a model yet.
+    setReviewIngredients(
+    FAKE_PHOTO_INGREDIENTS.map((name, index) => ({
+      name,
+      confidence: index < 3 ? 'higher' : 'lower',
+  }))
+)
+    return
+  }
+
+// Typed and spoken ingredients can continue directly to the recipe search.
+const found = typed
 
     const query = {
       ...EMPTY_SEARCH,
@@ -117,7 +134,220 @@ export default function Search() {
       setError(err.message)
     }
   }
+  // Show the uploaded photos and example ingredient groups for review.
+if (reviewIngredients !== null) {
+  // Update the name of one ingredient without changing the others.
+  function editIngredient(index, newName) {
+    setReviewIngredients((ingredients) =>
+      ingredients.map((ingredient, i) =>
+        i === index ? { ...ingredient, name: newName } : ingredient
+      )
+    )
+  }
 
+  // Remove an ingredient the user does not want to search for.
+  function removeIngredient(index) {
+    setReviewIngredients((ingredients) =>
+      ingredients.filter((_, i) => i !== index)
+    )
+  }
+  // Search for recipes using the ingredients the user has reviewed.
+async function searchReviewedIngredients() {
+  const ingredients = reviewIngredients
+    .map((ingredient) => ingredient.name.trim())
+    .filter((name) => name.length > 0)
+
+  // Require at least one ingredient before searching.
+  if (ingredients.length === 0) {
+    setError('Please add at least one ingredient before searching.')
+    return
+  }
+
+  const query = {
+    ...EMPTY_SEARCH,
+    ingredients,
+    meal,
+    tools,
+    maxMinutes: TIMES.find((t) => t.label === time)?.minutes ?? null,
+  }
+
+  setError(null)
+  setBusy(true)
+
+  try {
+    const page = await searchRecipes(query, prefs, 0)
+    if (!alive.current) return
+
+    // Save the search and show the recipe results.
+    setSearch({
+      ...query,
+      results: page.results,
+      offset: page.offset,
+      nextOffset: page.nextOffset,
+      total: page.totalResults,
+    })
+    navigate('/recipes')
+  } catch (err) {
+    if (alive.current) setError(err.message)
+  } finally {
+    if (alive.current) setBusy(false)
+  }
+}
+// Add an empty ingredient and immediately open it for editing
+function addIngredient(group) {
+  setReviewIngredients((ingredients) => [
+    ...ingredients,
+    { name: '', confidence: group },
+  ])
+
+  setEditingIngredient(reviewIngredients.length)
+}
+
+  // Create an editable list for one of the example confidence groups
+  function ingredientList(group) {
+    return reviewIngredients.map((ingredient, index) =>
+      ingredient.confidence === group ? (
+        <div key={index} style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+          {editingIngredient === index ? (
+            <input
+              className="input"
+              aria-label={`Edit ${ingredient.name || 'ingredient'}`}
+              value={ingredient.name}
+              autoFocus
+              onChange={(e) => editIngredient(index, e.target.value)}
+              onBlur={() => setEditingIngredient(null)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  e.currentTarget.blur()
+                }
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              className="input"
+              onClick={() => setEditingIngredient(index)}
+              aria-label={`Edit ${ingredient.name || 'ingredient'}`}
+              style={{ textAlign: 'left', cursor: 'pointer' }}
+            >
+              {ingredient.name || 'Click to enter an ingredient'}
+            </button>
+          )}
+          <button
+            type="button"
+            className="btn"
+            aria-label={`Remove ${ingredient.name || 'ingredient'}`}
+            onClick={() => removeIngredient(index)}
+          >
+            ✕
+          </button>
+        </div>
+      ) : null
+    )
+  }
+
+  return (
+    <div className="search">
+      <h1>Review your ingredients</h1>
+      <p className="lede">
+        These ingredients and confidence groups are examples. Photo
+        recognition has not been connected yet.
+      </p>
+      
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 20,
+          // Make the columns in the same row the same height.
+          alignItems: 'stretch', 
+        }}
+      >
+        <section className="panel" style={{ flex: '1 1 220px' }}>
+          <h2>More confident</h2>
+          <p>Edit or remove an ingredient.</p>
+          {ingredientList('higher')}
+          
+
+          <button
+            type="button"
+            className="btn"
+            style={{ marginTop: 8 }}
+            onClick={() => addIngredient('higher')}
+          >
+            Add to this column
+          </button>
+        </section>
+
+        <section className="panel" style={{ flex: '1 1 220px' }}>
+          <h2>Your photos</h2>
+          {/* Show every photo the user uploaded. */}
+          {photos.map((photo) => (
+            <img
+              key={photo.id}
+              src={photo.previewUrl}
+              alt={`Uploaded food: ${photo.name}`}
+              // Give each photo more space while keeping the whole image visible.
+            style={{
+              width: '100%',
+              height: 320,
+              objectFit: 'contain',
+              borderRadius: 12,
+              marginBottom: 10,
+            }}
+            />
+          ))}
+        </section>
+
+        <section className="panel" style={{ flex: '1 1 220px' }}>
+          <h2>Less confident</h2>
+          <p>Check these ingredients carefully.</p>
+          {ingredientList('lower')}
+          {/* Add the typed ingredient to the right column */}
+          <button
+            type="button"
+            className="btn"
+            style={{ marginTop: 16 }}
+            onClick={() => addIngredient('lower')}
+          >
+            Add additional ingredients
+          </button>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        className="btn"
+        style={{ marginTop: 20 }}
+        onClick={() => setReviewIngredients(null)}
+      >
+        Back
+      </button>
+      
+      {/* Show any problem without losing the user's ingredient edits. */}
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
+      )}
+
+      <button
+        type="button"
+        className="btn big red"
+        style={{ marginTop: 20, marginLeft: 10 }}
+        onClick={searchReviewedIngredients}
+        disabled={busy}
+      >
+        {busy ? 'Finding recipes...' : 'Find my recipes'}
+      </button>
+      <p className="note" style={{ textAlign: 'center', marginTop: 20 }}>
+        AI can make mistakes. Please check and correct the ingredients before
+        searching for recipes.
+      </p>
+    </div>
+  )
+}
   if (analyzing) return <Analyzing found={analyzing} fromPhoto={mode === 'photo'} />
 
   const prefList = [...prefs.diets.filter((d) => d !== NO_DIET).map((d) => d.toLowerCase()), ...prefs.allergies.map((a) => `no ${a.toLowerCase()}`)]
