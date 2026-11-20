@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import AppLayout from './components/AppLayout.jsx'
+import Faq from './pages/Faq.jsx'
 import Home from './pages/Home.jsx'
 import Library from './pages/Library.jsx'
 import Login from './pages/Login.jsx'
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/login" element={<Login mode="login" />} />
       <Route path="/signup" element={<Login mode="signup" />} />
       <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/faq" element={<Faq />} />
 
       {/* these need you to be logged in */}
       <Route element={<AppLayout />}>
