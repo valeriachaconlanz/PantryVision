@@ -91,7 +91,7 @@ export default function Profile() {
                 </button>
               )}
             </h2>
-            <p className="note">These only live on this device. We never save your pics on our servers.</p>
+            <p className="note">This list only lives on this device.</p>
             {history.length ? (
               <div className="history">
                 {history.map((h, i) => (

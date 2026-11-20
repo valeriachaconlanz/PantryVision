@@ -266,3 +266,14 @@
     align-items: flex-start;
   }
 }
+
+.band-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.privacy-band .link {
+  color: #fff;
+}

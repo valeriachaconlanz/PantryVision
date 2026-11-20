@@ -407,7 +407,10 @@ function addIngredient(group) {
                 onChange={(e) => addPhotos(e.target.files)}
               />
               <p className="fineprint">
-                PNG, JPEG or HEIC. We shrink them on your phone before uploading, and we don't keep them after.
+                PNG, JPEG or HEIC. We shrink them on your phone before uploading. How do we use them?{' '}
+                <Link className="link" to="/faq">
+                  Check the FAQ
+                </Link>
               </p>
             </>
           )}

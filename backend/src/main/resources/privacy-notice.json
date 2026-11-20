@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "lastUpdated": "2026-11-03",
+  "version": "1.1",
+  "lastUpdated": "2026-11-19",
   "title": "Your privacy",
   "sections": [
     {
@@ -9,7 +9,7 @@
     },
     {
       "heading": "Photos",
-      "body": "Photos are made smaller on your device before they are uploaded. We only use them to find the ingredients in them. Your photo history is saved on your device, not on our servers."
+      "body": "Photos are made smaller on your device before they are uploaded. We send them to Google's Gemini AI to find the ingredients in them, and Google handles them under its own terms. Your photo history in the app is saved on your device. Our FAQ has more on how photos are used."
     },
     {
       "heading": "Voice input",
@@ -17,11 +17,11 @@
     },
     {
       "heading": "Other services we use",
-      "body": "We send your photo or ingredient list to an AI service to find ingredients and make recipes, and we may use an outside recipe service. They only get what they need to do that."
+      "body": "We send your photos or ingredient list to Google's Gemini AI to find ingredients, and we use Spoonacular to find recipes. Spoonacular only gets your ingredient list and filters."
     },
     {
       "heading": "Your choices",
-      "body": "You can always type your ingredients instead of using a photo or your voice. You can delete your photo history by clearing this site's data in your browser. To remember that you accepted this note, we save a random id in your browser."
+      "body": "You can always type or say your ingredients instead of using a photo. You can delete your photo history in your profile or by clearing this site's data in your browser. To remember that you accepted this note, we save a random id in your browser."
     }
   ]
 }

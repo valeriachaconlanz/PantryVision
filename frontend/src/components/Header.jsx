@@ -16,12 +16,12 @@ export default function Header({ variant = 'app' }) {
 
         {variant === 'home' && (
           <nav aria-label="Main">
-            <a className="nav-link" href="#how">
+            <a className="nav-link" href="/#how">
               How it works
             </a>
-            <a className="nav-link" href="#privacy">
-              Privacy
-            </a>
+            <Link className="nav-link" to="/faq">
+              FAQ
+            </Link>
             {user ? (
               <Link className="btn" to="/search">
                 Open app

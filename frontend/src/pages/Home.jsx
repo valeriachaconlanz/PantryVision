@@ -113,15 +113,20 @@ export default function Home() {
       <section className="privacy-band" id="privacy">
         <div className="wrap">
           <div>
-            <h2>Your fridge pics stay private</h2>
+            <h2>We care about your privacy</h2>
             <p>
-              We only use your photos to find ingredients, then they're gone. Your photo history stays on your phone, not
-              on our servers.
+              We try to protect your privacy as much as we can. Curious how your pantry pics get used? Our FAQ explains
+              it all.
             </p>
           </div>
-          <button type="button" className="btn" onClick={() => setShowPrivacy((v) => !v)} aria-expanded={showPrivacy}>
-            {showPrivacy ? 'Hide the privacy note' : 'Read the privacy note'}
-          </button>
+          <div className="band-actions">
+            <Link className="btn" to="/faq">
+              Read the FAQ
+            </Link>
+            <button type="button" className="link" onClick={() => setShowPrivacy((v) => !v)} aria-expanded={showPrivacy}>
+              {showPrivacy ? 'Hide the privacy note' : 'Privacy note'}
+            </button>
+          </div>
         </div>
       </section>
       {showPrivacy && (
@@ -133,7 +138,12 @@ export default function Home() {
       <footer className="site-footer">
         <div className="wrap" style={{ paddingTop: 22 }}>
           <span>PantryVision, est. 2026</span>
-          <span>Made by Team 7</span>
+          <span>
+            <Link className="link" to="/faq">
+              FAQ
+            </Link>{' '}
+            · Made by Team 7
+          </span>
         </div>
       </footer>
     </>
